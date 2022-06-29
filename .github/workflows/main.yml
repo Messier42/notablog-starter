@@ -19,16 +19,32 @@ jobs:
     runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job
+#     steps:
+#       # 拉取代码
+#       - name: Checkout
+#         uses: actions/checkout@v2
+#       # 1、生成静态文件
+#       - name: Build
+#         run: npm i -g notablog && notablog generate .
+    strategy:
+      matrix:
+        node-version: [15, 16]
+
     steps:
-      # 拉取代码
-      - name: Checkout
-        uses: actions/checkout@v2
-      # 1、生成静态文件
-      - name: Build
-        run: npm i -g notablog && notablog generate .
-      # 2、部署到 GitHub Pages
+      - uses: actions/checkout@v1
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Generate the test blog
+        run: |
+          npm i -g notablog
+          notablog generate .
+        env:
+          CI: true
+        # 2、部署到 GitHub Pages
       - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4.2.5
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
           token: ${{ secrets.ACCESS_TOKEN }}
           repository-name: Messier42/messier42.github.io # 修改这里
