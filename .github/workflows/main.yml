@@ -34,7 +34,7 @@ jobs:
           node-version: "16"
       - name: Generate the test blog
         run: |
-          npm i --location:global notablog
+          npm i --location=global notablog
           notablog generate .
         env:
           CI: true
